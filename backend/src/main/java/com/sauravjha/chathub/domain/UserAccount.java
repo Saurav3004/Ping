@@ -2,6 +2,7 @@ package com.sauravjha.chathub.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class UserAccount {
 
     @Id

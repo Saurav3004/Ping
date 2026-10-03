@@ -5,6 +5,7 @@ import com.sauravjha.chathub.api.dto.LoginRequest;
 import com.sauravjha.chathub.api.dto.RegisterRequest;
 import com.sauravjha.chathub.domain.UserAccount;
 import com.sauravjha.chathub.exception.ConflictException;
+import com.sauravjha.chathub.exception.ForbiddenException;
 import com.sauravjha.chathub.exception.NotFoundException;
 import com.sauravjha.chathub.repository.UserAccountRepository;
 import com.sauravjha.chathub.security.JwtService;
@@ -40,12 +41,14 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request){
-        var user = userAccountRepository.findByEmailIgnoreCase(request.email());
-        if(user.isEmpty()){
-            throw new NotFoundException("User not found");
+        var user =
+                userAccountRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new ForbiddenException("Invalid email or password"));
+
+        if(!user.isEnabled() || !passwordEncoder.matches(request.password(),user.getPasswordHash())){
+            throw new ForbiddenException("Invalid email or password");
         }
 
-
+        return response(user);
     }
 
     private AuthResponse response(UserAccount user){

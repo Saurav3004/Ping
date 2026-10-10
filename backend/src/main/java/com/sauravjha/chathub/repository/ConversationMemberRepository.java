@@ -41,4 +41,6 @@ public interface ConversationMemberRepository extends JpaRepository<Conversation
     List<ConversationMemberResponse> findConversationMemberResponses(
             @Param("conversationIds") Collection<UUID> conversationIds
     );
+
+    boolean existsByConversationIdAndUserId(UUID conversationId,UUID userId);
 }

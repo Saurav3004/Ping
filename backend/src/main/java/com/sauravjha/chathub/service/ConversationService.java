@@ -1,9 +1,6 @@
 package com.sauravjha.chathub.service;
 
-import com.sauravjha.chathub.api.dto.AddMemberRequest;
-import com.sauravjha.chathub.api.dto.ConversationResponse;
-import com.sauravjha.chathub.api.dto.CreateConversationRequest;
-import com.sauravjha.chathub.api.dto.MemberResponse;
+import com.sauravjha.chathub.api.dto.*;
 import com.sauravjha.chathub.domain.Conversation;
 import com.sauravjha.chathub.domain.ConversationMember;
 import com.sauravjha.chathub.domain.ConversationType;
@@ -156,15 +153,75 @@ public class ConversationService {
             );
         }
 
-        if(!userAccountRepository.existsById(request.userId()){
+        if(!userAccountRepository.existsById(request.userId())){
             throw new NotFoundException("User not found");
         }
 
-//        if(request.)
+        if(conversationMemberRepository.existsByConversationIdAndUserId(conversationId,request.userId())){
+            throw new ConflictException("User is already a member");
+        }
 
-        var actor = membershipService.requireManager(conversationId,actorId);
+        membershipService.requireManager(conversationId,actorId);
 
+        var newMember = new ConversationMember(conversationId,request.userId(),request.role());
 
+        conversationMemberRepository.save(newMember);
+        return toResponse(conversation);
+
+    }
+
+    @Transactional
+    public ConversationResponse removeMember(
+            UUID actorId,
+            UUID conversationId,
+            UUID memberUserId
+    ){
+        var conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new NotFoundException(
+                "Conversation not found"));
+
+        if(conversation.getType().equals(ConversationType.DIRECT)){
+            throw new ConflictException(
+                    "Direct conversation do not support member removal."
+            );
+        }
+
+        membershipService.requireManager(conversationId,actorId);
+
+        if(actorId.equals(memberUserId)){
+            throw new ConflictException("Use delete conversation to leave for yourself.");
+        }
+
+        var targetMember =
+                conversationMemberRepository.findByConversationIdAndUserId(conversationId,memberUserId)
+                        .orElseThrow(() -> new NotFoundException("Member not found"));
+
+        if(targetMember.getRole().equals(MemberRole.OWNER)){
+            throw new ConflictException("Owner cannot be removed from group");
+        }
+
+        conversationMemberRepository.delete(targetMember);
+
+        return toResponse(conversation);
+    }
+
+    @Transactional
+    public ConversationResponse update(
+            UUID actorId,
+            UUID conversationId,
+            UpdateConversationRequest request
+    ){
+        var conversation = conversationRepository.findById(conversationId).orElseThrow(() -> new NotFoundException(
+                "Conversation not found"));
+
+        membershipService.requireManager(conversationId,actorId);
+
+        if(conversation.getType().equals(ConversationType.DIRECT)){
+            throw new ConflictException("Only group conversations can be updated");
+        }
+
+        conversation.rename(request.title());
+
+        return toResponse(conversation);
     }
 
     private ConversationResponse toResponse(Conversation conversation){

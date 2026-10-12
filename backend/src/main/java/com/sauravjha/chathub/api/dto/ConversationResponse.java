@@ -1,6 +1,6 @@
 package com.sauravjha.chathub.api.dto;
 
-import com.sauravjha.chathub.domain.ConversationType;
+import com.sauravjha.chathub.domain.type.ConversationType;
 
 import java.time.Instant;
 import java.util.List;

@@ -1,0 +1,1 @@
+CREATE INDEX idx_member_user ON CONVERSATION_MEMBERS(user_id);

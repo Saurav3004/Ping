@@ -1,5 +1,6 @@
 package com.sauravjha.chathub.domain;
 
+import com.sauravjha.chathub.domain.type.ConversationType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.sauravjha.chathub.repository;
 
 import com.sauravjha.chathub.domain.Conversation;
-import com.sauravjha.chathub.domain.ConversationType;
+import com.sauravjha.chathub.domain.type.ConversationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

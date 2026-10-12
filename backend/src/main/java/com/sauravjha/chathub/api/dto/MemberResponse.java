@@ -1,6 +1,6 @@
 package com.sauravjha.chathub.api.dto;
 
-import com.sauravjha.chathub.domain.MemberRole;
+import com.sauravjha.chathub.domain.type.MemberRole;
 
 import java.util.UUID;
 

@@ -2,7 +2,9 @@ package com.sauravjha.chathub.repository;
 
 import com.sauravjha.chathub.domain.Conversation;
 import com.sauravjha.chathub.domain.type.ConversationType;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,4 +36,12 @@ public interface ConversationRepository extends JpaRepository<Conversation, UUID
                ORDER BY cm.joinedAt DESC
 """)
     List<Conversation> findAllForUser(@Param("userId") UUID userId);
+
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+          SELECT c FROM Conversation c
+          WHERE c.id = :id
+""")
+    Optional<Conversation> findByIdForUpdate(@Param("id") UUID id);
 }

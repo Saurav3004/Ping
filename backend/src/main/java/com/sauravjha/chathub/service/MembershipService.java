@@ -14,7 +14,7 @@ public class MembershipService {
     private final ConversationMemberRepository cmRepo;
 
     public ConversationMember requireMember(UUID conversationId,UUID userId){
-        return cmRepo.findByConversationIdAndUserId(conversationId,userId).orElseThrow(() -> new ForbiddenException("You are not a member of this conservation."));
+        return cmRepo.findByConversationIdAndUserId(conversationId,userId).orElseThrow(() -> new ForbiddenException("You are not a member of this conversation."));
     }
 
     public ConversationMember requireManager(UUID conversationId,UUID userId){

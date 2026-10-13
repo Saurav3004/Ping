@@ -53,3 +53,12 @@ databaseChangeLog:
             relativeToChangelogFile: false
             splitStatements: true
             stripComments: true
+  - changeSet:
+      id: 007-create-message-receipts-schema
+      author: chathub
+      changes:
+        - sqlFile:
+            path: db/changelog/007-create-message-receipts-schema.sql
+            relativeToChangelogFile: false
+            splitStatements: true
+            stripComments: true

@@ -43,4 +43,11 @@ public interface ConversationMemberRepository extends JpaRepository<Conversation
     );
 
     boolean existsByConversationIdAndUserId(UUID conversationId,UUID userId);
+
+    @Query("""
+        SELECT cm.userId FROM ConversationMember cm
+        WHERE cm.conversationId = :conversationId
+        AND cm.userId <> :senderId
+""")
+    List<UUID> findRecipientIds(UUID conversationId,UUID senderId);
 }

@@ -2,6 +2,7 @@ package com.sauravjha.chathub.service;
 
 import com.sauravjha.chathub.api.dto.ReceiptRequest;
 import com.sauravjha.chathub.api.dto.ReceiptResponse;
+import com.sauravjha.chathub.exception.ForbiddenException;
 import com.sauravjha.chathub.exception.NotFoundException;
 import com.sauravjha.chathub.repository.ConversationMemberRepository;
 import com.sauravjha.chathub.repository.MessageReceiptRepository;
@@ -53,5 +54,12 @@ public class ReceiptService {
                 conversationMemberRepository.save(member);
             }
         }
+
+        var receiptState = messageReceiptStateService.resolveForSender(message,message.getSenderId(),
+                messageReceiptRepository.findAllByMessageId(messageId)).orElseThrow(() -> new ForbiddenException("You" +
+                " are not allowed to view the state of messages"));
+
+        return new ReceiptResponse(receipt.getMessageId(),receipt.getUserId(),receipt.getDeliveredAt(),
+                receipt.getReadAt(),receiptState);
     }
 }
